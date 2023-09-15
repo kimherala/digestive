@@ -1,0 +1,8 @@
+    Name
+          hh - hash program with support for many hash functions
+    
+    Syntax
+          hh [OPTIONS]... [FILE]...
+    
+    Description
+          -h  display this manual and exit
