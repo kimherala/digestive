@@ -21,7 +21,7 @@ pub fn main() !void {
         if (std.mem.eql(u8, args[1][0..], "-h")) {
             try stdout.print("{s}\n", .{manual});
         } else {
-            const sha = hash.fileHash(allocator, args[1]) catch |err| {
+            const sha = hash.fileHash(allocator, args[1], .sha256) catch |err| {
                 std.log.info("{}", .{err});
                 try stdout.print("{s}\n", .{"0"});
                 return;
