@@ -1,8 +1,16 @@
-    Name
-          hh - hash program with support for many hash functions
+Name
+    hh - hash program with support for many hash functions
     
-    Syntax
-          hh [OPTIONS]... [FILE]...
+Syntax
+    hh [OPTIONS]... [FILE]...
     
-    Description
-          -h  display this manual and exit
+Examples  
+    hh -hf sha256 -f example.txt
+
+Description
+    -h  display this manual and exit
+
+    -hf  hash function to be used
+            values: sha256, sha512, sha3_512, blake2, blake3
+    
+    -f  filesystem path to file
