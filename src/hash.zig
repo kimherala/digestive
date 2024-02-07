@@ -93,7 +93,7 @@ pub fn hintFromString(functionString: []const u8) !HashHint {
     if (std.mem.eql(u8, functionString, "sha256")) {
         return .sha256;
     }
-    if (std.mem.eql(u8, functionString, "sha521")) {
+    if (std.mem.eql(u8, functionString, "sha512")) {
         return .sha512;
     }
     if (std.mem.eql(u8, functionString, "sha3-512")) {
