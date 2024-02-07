@@ -53,20 +53,10 @@ fn Program() type {
         fn importArgs(self: *Self, args: []const []const u8) !void {
             const supporeted_flags = [_][]const u8{ "-h", "-hf", "-f", "-d" };
 
-            for (args) |arg| {
+            for (0.., args) |i, arg| {
                 for (supporeted_flags) |flag| {
-                    if (std.mem.eql(u8, arg, flag)) {
-                        try self.flags.put(arg, "");
-                    }
-                }
-            }
-
-            for (args, 0..) |arg, i| {
-                if (i + 1 < args.len) {
-                    for (supporeted_flags) |flag| {
-                        if (std.mem.eql(u8, arg, flag)) {
-                            try self.flags.put(arg, args[i + 1]);
-                        }
+                    if (std.mem.eql(u8, arg, flag) and i < args.len - 1) {
+                        try self.flags.put(arg, args[i + 1]);
                     }
                 }
             }
