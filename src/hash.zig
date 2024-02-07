@@ -15,7 +15,6 @@ pub const HashHint = enum {
     blake3,
 };
 
-/// Returns bytes SHA3-512 hash as hex.
 pub fn fileHash(allocator: std.mem.Allocator, filePath: []const u8, hashHint: HashHint, encoding: EncodingHint) ![]u8 {
     const file = try ioutil.fileRead(allocator, filePath);
     defer allocator.free(file);
@@ -74,7 +73,8 @@ pub fn encodeBytes(allocator: std.mem.Allocator, encoding: EncodingHint, input: 
     }
 }
 
-// Modified version from std.fmt.bytesToHex
+// Modified version of std.fmt.bytesToHex.
+// The standard library version requires the input size to be known at compile time.
 pub fn bytesToHex(allocator: std.mem.Allocator, input: []const u8, case: std.fmt.Case) ![]u8 {
     if (input.len == 0) return &[_]u8{};
 
