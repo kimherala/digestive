@@ -90,7 +90,7 @@ fn Program() type {
                     return;
                 };
                 defer self.allocator.free(digest);
-                try stdout.print("{s}", .{digest});
+                try stdout.print("{s}\n", .{digest});
             }
         }
     };
