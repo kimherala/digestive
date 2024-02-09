@@ -51,7 +51,7 @@ fn Program() type {
         }
 
         fn importArgs(self: *Self, args: []const []const u8) !void {
-            const supporeted_flags = [_][]const u8{ "-h", "-hf", "-f", "-d" };
+            const supporeted_flags = [_][]const u8{ "-h", "-hf", "-ec", "-f", "-d" };
 
             for (0.., args) |i, arg| {
                 for (supporeted_flags) |flag| {
@@ -68,6 +68,7 @@ fn Program() type {
             var readFile: bool = false;
             var filePath: []const u8 = undefined;
             var hashFunction: hash.HashHint = .sha256;
+            var encoding: hash.EncodingHint = .hex;
 
             if (self.flags.contains("-h")) {
                 try stdout.print("{s}", .{manual});
@@ -81,16 +82,29 @@ fn Program() type {
 
             if (self.flags.contains("-hf")) {
                 const hashFunctionString = self.flags.get("-hf").?;
-                hashFunction = try hash.hintFromString(hashFunctionString);
+                hashFunction = try hash.hashHintFromString(hashFunctionString);
+            }
+
+            if (self.flags.contains("-ec")) {
+                const encodingString = self.flags.get("-ec").?;
+                encoding = try hash.encodingHintFromString(encodingString);
             }
 
             if (readFile == true) {
-                const digest = hash.fileHash(self.allocator, filePath, hashFunction, .hex) catch |err| {
+                const digest = hash.fileHash(self.allocator, filePath, hashFunction, encoding) catch |err| {
                     try catchError(err);
                     return;
                 };
                 defer self.allocator.free(digest);
-                try stdout.print("{s}\n", .{digest});
+
+                switch (encoding) {
+                    .raw => {
+                        try stdout.print("{d}\n", .{digest});
+                    },
+                    .hex, .base64 => {
+                        try stdout.print("{s}\n", .{digest});
+                    },
+                }
             }
         }
     };

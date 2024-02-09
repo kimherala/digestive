@@ -1,7 +1,7 @@
 const std = @import("std");
 const ioutil = @import("ioutil.zig");
 
-const EncodingHint = enum {
+pub const EncodingHint = enum {
     raw,
     hex,
     base64,
@@ -89,7 +89,7 @@ pub fn bytesToHex(allocator: std.mem.Allocator, input: []const u8, case: std.fmt
     return result;
 }
 
-pub fn hintFromString(functionString: []const u8) !HashHint {
+pub fn hashHintFromString(functionString: []const u8) !HashHint {
     if (std.mem.eql(u8, functionString, "sha256")) {
         return .sha256;
     }
@@ -107,4 +107,15 @@ pub fn hintFromString(functionString: []const u8) !HashHint {
     }
 
     return error.HashHintNotFound;
+}
+
+pub fn encodingHintFromString(encodingString: []const u8) !EncodingHint {
+    if (std.mem.eql(u8, encodingString, "raw")) {
+        return .raw;
+    }
+    if (std.mem.eql(u8, encodingString, "hex")) {
+        return .hex;
+    }
+
+    return error.EncodingHintNotFound;
 }
