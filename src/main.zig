@@ -85,7 +85,7 @@ fn Program() type {
             }
 
             if (readFile == true) {
-                var digest = hash.fileHash(self.allocator, filePath, hashFunction, .hex) catch |err| {
+                const digest = hash.fileHash(self.allocator, filePath, hashFunction, .hex) catch |err| {
                     try catchError(err);
                     return;
                 };

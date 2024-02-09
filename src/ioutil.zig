@@ -7,7 +7,7 @@ pub fn fileRead(allocator: std.mem.Allocator, file_path: []const u8) ![]const u8
 
     const file_metadata = try file.metadata();
 
-    var file_buffer = try allocator.alloc(u8, file_metadata.size());
+    const file_buffer = try allocator.alloc(u8, file_metadata.size());
 
     _ = try file.readAll(file_buffer);
 

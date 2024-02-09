@@ -59,8 +59,8 @@ fn digestBytes(allocator: std.mem.Allocator, hashHint: HashHint, input: []const 
 pub fn encodeBytes(allocator: std.mem.Allocator, encoding: EncodingHint, input: []const u8) ![]u8 {
     switch (encoding) {
         .raw => {
-            var result: []u8 = try allocator.alloc(u8, input.len);
-            std.mem.copy(u8, result, input);
+            const result: []u8 = try allocator.alloc(u8, input.len);
+            std.mem.copyForwards(u8, result, input);
             return result;
         },
         .hex => {
