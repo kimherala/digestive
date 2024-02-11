@@ -1,7 +1,7 @@
 const std = @import("std");
 const hash = @import("hash.zig");
 
-// Manual (-h, --help)
+// Manual (-h)
 const manual = @embedFile("manual.txt");
 
 pub fn main() !void {
@@ -55,7 +55,11 @@ fn Program() type {
 
             for (0.., args) |i, arg| {
                 for (supporeted_flags) |flag| {
-                    if (std.mem.eql(u8, arg, flag) and i <= args.len - 1) {
+                    if (std.mem.eql(u8, arg, "-h")) {
+                        try self.flags.put(arg, "");
+                    }
+
+                    if (std.mem.eql(u8, arg, flag) and i < args.len - 1) {
                         try self.flags.put(arg, args[i + 1]);
                     }
                 }
