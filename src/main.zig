@@ -55,7 +55,7 @@ fn Program() type {
 
             for (0.., args) |i, arg| {
                 for (supporeted_flags) |flag| {
-                    if (std.mem.eql(u8, arg, flag) and i < args.len - 1) {
+                    if (std.mem.eql(u8, arg, flag) and i <= args.len - 1) {
                         try self.flags.put(arg, args[i + 1]);
                     }
                 }
