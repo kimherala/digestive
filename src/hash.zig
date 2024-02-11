@@ -68,7 +68,10 @@ pub fn encodeBytes(allocator: std.mem.Allocator, encoding: EncodingHint, input: 
             return result;
         },
         .base64 => {
-            return &[_]u8{};
+            const base64Encoder = std.base64.Base64Encoder.init(std.base64.standard_alphabet_chars, '=');
+            const result = try allocator.alloc(u8, base64Encoder.calcSize(input.len));
+            _ = base64Encoder.encode(result, input);
+            return result;
         },
     }
 }
@@ -115,6 +118,9 @@ pub fn encodingHintFromString(encodingString: []const u8) !EncodingHint {
     }
     if (std.mem.eql(u8, encodingString, "hex")) {
         return .hex;
+    }
+    if (std.mem.eql(u8, encodingString, "base64")) {
+        return .base64;
     }
 
     return error.EncodingHintNotFound;
