@@ -99,7 +99,13 @@ fn Program() type {
 
                 switch (encoding) {
                     .raw => {
-                        try stdout.print("{d}\n", .{digest});
+                        for (1.., digest) |i, byte| {
+                            if (i < digest.len) {
+                                try stdout.print("{d}, ", .{byte});
+                            } else {
+                                try stdout.print("{d}\n", .{byte});
+                            }
+                        }
                     },
                     .hex, .base64 => {
                         try stdout.print("{s}\n", .{digest});
