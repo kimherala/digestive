@@ -1,7 +1,7 @@
 const std = @import("std");
 const hash = @import("hash.zig");
 
-// Manual (-h, --help)
+// Manual (-h)
 const manual = @embedFile("manual.txt");
 
 pub fn main() !void {
@@ -51,10 +51,14 @@ fn Program() type {
         }
 
         fn importArgs(self: *Self, args: []const []const u8) !void {
-            const supporeted_flags = [_][]const u8{ "-h", "-hf", "-f", "-d" };
+            const supporeted_flags = [_][]const u8{ "-h", "-hf", "-ec", "-f", "-d" };
 
             for (0.., args) |i, arg| {
                 for (supporeted_flags) |flag| {
+                    if (std.mem.eql(u8, arg, "-h")) {
+                        try self.flags.put(arg, "");
+                    }
+
                     if (std.mem.eql(u8, arg, flag) and i < args.len - 1) {
                         try self.flags.put(arg, args[i + 1]);
                     }
@@ -68,6 +72,7 @@ fn Program() type {
             var readFile: bool = false;
             var filePath: []const u8 = undefined;
             var hashFunction: hash.HashHint = .sha256;
+            var encoding: hash.EncodingHint = .hex;
 
             if (self.flags.contains("-h")) {
                 try stdout.print("{s}", .{manual});
@@ -81,16 +86,35 @@ fn Program() type {
 
             if (self.flags.contains("-hf")) {
                 const hashFunctionString = self.flags.get("-hf").?;
-                hashFunction = try hash.hintFromString(hashFunctionString);
+                hashFunction = try hash.hashHintFromString(hashFunctionString);
+            }
+
+            if (self.flags.contains("-ec")) {
+                const encodingString = self.flags.get("-ec").?;
+                encoding = try hash.encodingHintFromString(encodingString);
             }
 
             if (readFile == true) {
-                const digest = hash.fileHash(self.allocator, filePath, hashFunction, .hex) catch |err| {
+                const digest = hash.fileHash(self.allocator, filePath, hashFunction, encoding) catch |err| {
                     try catchError(err);
                     return;
                 };
                 defer self.allocator.free(digest);
-                try stdout.print("{s}\n", .{digest});
+
+                switch (encoding) {
+                    .raw => {
+                        for (1.., digest) |i, byte| {
+                            if (i < digest.len) {
+                                try stdout.print("{d}, ", .{byte});
+                            } else {
+                                try stdout.print("{d}\n", .{byte});
+                            }
+                        }
+                    },
+                    .hex, .base64 => {
+                        try stdout.print("{s}\n", .{digest});
+                    },
+                }
             }
         }
     };

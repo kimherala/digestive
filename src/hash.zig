@@ -1,7 +1,7 @@
 const std = @import("std");
 const ioutil = @import("ioutil.zig");
 
-const EncodingHint = enum {
+pub const EncodingHint = enum {
     raw,
     hex,
     base64,
@@ -68,7 +68,10 @@ pub fn encodeBytes(allocator: std.mem.Allocator, encoding: EncodingHint, input: 
             return result;
         },
         .base64 => {
-            return &[_]u8{};
+            const base64Encoder = std.base64.Base64Encoder.init(std.base64.standard_alphabet_chars, '=');
+            const result = try allocator.alloc(u8, base64Encoder.calcSize(input.len));
+            _ = base64Encoder.encode(result, input);
+            return result;
         },
     }
 }
@@ -89,7 +92,7 @@ pub fn bytesToHex(allocator: std.mem.Allocator, input: []const u8, case: std.fmt
     return result;
 }
 
-pub fn hintFromString(functionString: []const u8) !HashHint {
+pub fn hashHintFromString(functionString: []const u8) !HashHint {
     if (std.mem.eql(u8, functionString, "sha256")) {
         return .sha256;
     }
@@ -107,4 +110,29 @@ pub fn hintFromString(functionString: []const u8) !HashHint {
     }
 
     return error.HashHintNotFound;
+}
+
+pub fn encodingHintFromString(encodingString: []const u8) !EncodingHint {
+    if (std.mem.eql(u8, encodingString, "raw")) {
+        return .raw;
+    }
+    if (std.mem.eql(u8, encodingString, "hex")) {
+        return .hex;
+    }
+    if (std.mem.eql(u8, encodingString, "base64")) {
+        return .base64;
+    }
+
+    return error.EncodingHintNotFound;
+}
+
+test "bytesToHex" {
+    const allocator = std.testing.allocator;
+    const data = "test";
+
+    var standard = std.fmt.bytesToHex(data, .lower);
+    var testData = try bytesToHex(allocator, data, .lower);
+    defer allocator.free(testData);
+
+    try std.testing.expectEqualSlices(u8, &standard, testData);
 }
