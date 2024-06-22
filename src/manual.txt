@@ -14,6 +14,6 @@ Description
             values: sha256, sha512, sha3_512, blake2, blake3
     
     -ec  encoding to be used
-            values: raw, hex 
+            values: raw, hex, base64
     
     -f  filesystem path to file
