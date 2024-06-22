@@ -131,7 +131,7 @@ test "bytesToHex" {
     const data = "test";
 
     var standard = std.fmt.bytesToHex(data, .lower);
-    var testData = try bytesToHex(allocator, data, .lower);
+    const testData = try bytesToHex(allocator, data, .lower);
     defer allocator.free(testData);
 
     try std.testing.expectEqualSlices(u8, &standard, testData);
