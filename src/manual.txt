@@ -1,11 +1,11 @@
 Name
-    hh - hash program with support for many hash functions
+    digestive - hash program with support for many hash functions
     
 Syntax
-    hh [OPTIONS]... [FILE]...
+    digestive [OPTIONS]... [FILE]...
     
 Examples  
-    hh -hf sha256 -f example.txt
+    digestive -hf sha256 -f example.txt
 
 Description
     -h  display this manual and exit
